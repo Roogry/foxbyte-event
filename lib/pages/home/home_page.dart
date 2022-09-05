@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:foxbyte_event/pages/auth/sign_in_page.dart';
 import 'package:foxbyte_event/pages/home/widgets/event_card.dart';
+import 'package:foxbyte_event/pages/scanner/qrcode_scan_page.dart';
 import 'package:foxbyte_event/services/color_config.dart';
 import 'package:foxbyte_event/utils/helper.dart';
 import 'package:foxbyte_event/widgets/k_text.dart';
@@ -17,7 +18,9 @@ class HomePage extends StatelessWidget {
         height: 70,
         width: 70,
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Get.to(() => const QrcodeScanPage());
+          },
           child: SvgPicture.asset(
             "assets/icons/ic_scan.svg",
             width: 32,
@@ -51,54 +54,17 @@ class HomePage extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       color: ColorConfig.greyText,
                     ),
-                    _btnLogout(
-                      onTap: (){
-                        Get.offAll(()=> const SignInPage());
-                      }
-                    ),
+                    _btnLogout(onTap: () {
+                      Get.offAll(() => const SignInPage());
+                    }),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.all(16),
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  borderRadius: Helper.getRadius(8),
-                  image: const DecorationImage(
-                    image:
-                        AssetImage("assets/decorations/bg_gradient_spiral.png"),
-                    fit: BoxFit.fitWidth,
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        KText(
-                          text: "Ketemu Foxbyte?",
-                          color: ColorConfig.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        const SizedBox(height: 4),
-                        KText(
-                          text: "Jangan lupa scan barcode",
-                          color: ColorConfig.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ],
-                    ),
-                    const Icon(
-                      Icons.chevron_right,
-                      color: ColorConfig.white,
-                      size: 32,
-                    )
-                  ],
-                ),
+              _cardBanner(
+                onTap: () {
+                  Get.to(() => const QrcodeScanPage());
+                },
               ),
               const SizedBox(height: 40),
               Padding(
@@ -112,16 +78,12 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Wrap(
-                  spacing: 12,
-                  runSpacing: 8,
-                  children: [
-                    EventCard(),
-                    EventCard(),
-                    EventCard(),
-                    EventCard(),
-                  ]
-                ),
+                child: Wrap(spacing: 12, runSpacing: 8, children: [
+                  EventCard(),
+                  EventCard(),
+                  EventCard(),
+                  EventCard(),
+                ]),
               )
             ],
           ),
@@ -130,14 +92,56 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _btnLogout({
-    Function()? onTap
-  }){
+  Widget _cardBanner({Function()? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-            horizontal: 10, vertical: 6),
+        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          borderRadius: Helper.getRadius(8),
+          image: const DecorationImage(
+            image: AssetImage("assets/decorations/bg_gradient_spiral.png"),
+            fit: BoxFit.fitWidth,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                KText(
+                  text: "Ketemu Foxbyte?",
+                  color: ColorConfig.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+                const SizedBox(height: 4),
+                KText(
+                  text: "Jangan lupa scan barcode",
+                  color: ColorConfig.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ],
+            ),
+            const Icon(
+              Icons.chevron_right,
+              color: ColorConfig.white,
+              size: 32,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _btnLogout({Function()? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           borderRadius: Helper.getRadius(4),
           color: ColorConfig.redLight,
