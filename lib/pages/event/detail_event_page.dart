@@ -4,9 +4,25 @@ import 'package:foxbyte_event/utils/helper.dart';
 import 'package:foxbyte_event/widgets/k_primary_button.dart';
 import 'package:foxbyte_event/widgets/k_text.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailEventPage extends StatelessWidget {
   const DetailEventPage({Key? key}) : super(key: key);
+
+  _openMaps() async {
+    String lat = "-8.620085"; 
+    String lng = "115.200761"; 
+    Uri googleMapsUrl = Uri.parse("comgooglemaps://?center=$lat,$lng");
+    Uri appleMapsUrl = Uri.parse("https://maps.apple.com/?q=$lat,$lng");
+
+    if (await canLaunchUrl(googleMapsUrl)) {
+      await launchUrl(googleMapsUrl);
+    } else if (await canLaunchUrl(appleMapsUrl)) {
+      await launchUrl(appleMapsUrl);
+    } else {
+      throw "Couldn't maps launch URL";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +95,9 @@ class DetailEventPage extends StatelessWidget {
                 color: ColorConfig.greyText,
               ),
               KPrimaryButton(
-                function: () {},
+                function: () async {
+                  _openMaps();
+                },
                 title: "Buka Maps",
                 fontsize: 14,
                 width: 120,
