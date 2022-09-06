@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:foxbyte_event/controllers/auth_controller.dart';
 import 'package:foxbyte_event/pages/auth/sign_in_page.dart';
 import 'package:foxbyte_event/pages/home/widgets/event_card.dart';
 import 'package:foxbyte_event/pages/scanner/qrcode_scan_page.dart';
@@ -9,7 +10,8 @@ import 'package:foxbyte_event/widgets/k_text.dart';
 import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
+  final _authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,7 @@ class HomePage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: KText(
-                  text: "Halo, Jodie",
+                  text: "Halo, ${_authController.user.value?.displayName}",
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                 ),
@@ -50,12 +52,12 @@ class HomePage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     KText(
-                      text: "jodiemantra@gmail.com",
+                      text: _authController.user.value?.email?? "test@gmail.com",
                       fontWeight: FontWeight.w600,
                       color: ColorConfig.greyText,
                     ),
                     _btnLogout(onTap: () {
-                      Get.offAll(() => const SignInPage());
+                      Get.offAll(() => SignInPage());
                     }),
                   ],
                 ),

@@ -1,12 +1,27 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:foxbyte_event/controllers/auth_controller.dart';
 import 'package:foxbyte_event/pages/home/home_page.dart';
 import 'package:foxbyte_event/services/color_config.dart';
 import 'package:foxbyte_event/utils/helper.dart';
 import 'package:foxbyte_event/widgets/k_text.dart';
 import 'package:get/get.dart';
 
-class SignInPage extends StatelessWidget {
-  const SignInPage({Key? key}) : super(key: key);
+class SignInPage extends StatefulWidget {
+  SignInPage({Key? key}) : super(key: key);
+
+  @override
+  State<SignInPage> createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
+  final _authController = Get.put(AuthController());
+
+  @override
+  void initState() {
+    _authController.checkAuth();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +32,8 @@ class SignInPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/decorations/ornament_login.png',
+            Image.asset(
+              'assets/decorations/ornament_login.png',
               fit: BoxFit.cover,
               width: Get.width * 60 / 100,
             ),
@@ -31,7 +47,8 @@ class SignInPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 46),
               child: KText(
-                text: "Halo teman Foxbyte, lakukan registrasi peserta yang telah mengunjungi kami pada tiap event yang diadakan.",
+                text:
+                    "Halo teman Foxbyte, lakukan registrasi peserta yang telah mengunjungi kami pada tiap event yang diadakan.",
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 isOverflow: false,
@@ -43,14 +60,29 @@ class SignInPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: _btnGoogle(),
+      bottomNavigationBar: Obx(
+        () => _authController.isLoading.value
+            ? Container(
+                height: 56,
+                margin: const EdgeInsets.fromLTRB(24, 0, 24, 40),
+                child: Helper.progressBar(),
+              )
+            : _btnGoogle(),
+      ),
     );
   }
 
-  Widget _btnGoogle(){
+  Widget _btnGoogle() {
     return GestureDetector(
-      onTap: () {
-        Get.offAll(()=> const HomePage());
+      onTap: () async {
+        try {
+          _authController.user.value = await _authController.signInWithGoogle();
+          Get.offAll(() => HomePage());
+        } catch (e) {
+          if (e is FirebaseAuthException) {
+            Helper.snackbar(title: "Error", content: e.message!);
+          }
+        }
       },
       child: Container(
         height: 56,

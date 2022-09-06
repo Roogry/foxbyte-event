@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.foxbyte_event">
+    <uses-permission android:name="android.permission.INTERNET" />
+    
    <application
         android:label="foxbyte_event"
         android:name="${applicationName}"

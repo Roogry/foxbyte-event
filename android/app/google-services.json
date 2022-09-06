@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "849850277536",
+    "project_id": "foxbyte-event",
+    "storage_bucket": "foxbyte-event.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849850277536:android:0229dd3011684415c2f3c5",
+        "android_client_info": {
+          "package_name": "com.example.foxbyte_event"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "849850277536-b9hhoves4uprmhrksjq9ihl3lcsv96bi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBT1R7OrHzW6-PaxmmyxQY1fbYIZ6mYAE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "849850277536-b9hhoves4uprmhrksjq9ihl3lcsv96bi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
