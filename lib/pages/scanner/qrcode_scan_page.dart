@@ -79,7 +79,6 @@ class _QrcodeScanPageState extends State<QrcodeScanPage> {
                       onPressed: () async {
                         await _qrController?.toggleFlash();
                         _isFlashOn.value = !_isFlashOn.value;
-                        print(_isFlashOn.value.toString());
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Colors.white,
