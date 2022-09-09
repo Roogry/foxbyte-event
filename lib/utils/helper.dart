@@ -42,7 +42,7 @@ class Helper {
       Offset? offset}) {
     return [
       BoxShadow(
-          color: color ?? ColorConfig.blackLabel,
+          color: color ?? ColorConfig.blackText,
           blurRadius: blurRadius ?? 1,
           offset: offset ?? const Offset(1.0, 1.0),
           blurStyle: blurStyle ?? BlurStyle.normal,
@@ -166,7 +166,7 @@ class Helper {
                     style: ElevatedButton.styleFrom(
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(16))),
-                      primary: buttonColor ?? ColorConfig.accent,
+                      primary: buttonColor ?? ColorConfig.primaryColor,
                     ),
                     onPressed: () {
                       Navigator.of(context).pop();
