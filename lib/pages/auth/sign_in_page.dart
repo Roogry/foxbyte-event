@@ -7,21 +7,10 @@ import 'package:foxbyte_event/utils/helper.dart';
 import 'package:foxbyte_event/widgets/k_text.dart';
 import 'package:get/get.dart';
 
-class SignInPage extends StatefulWidget {
+class SignInPage extends StatelessWidget {
   SignInPage({Key? key}) : super(key: key);
-
-  @override
-  State<SignInPage> createState() => _SignInPageState();
-}
-
-class _SignInPageState extends State<SignInPage> {
+  
   final _authController = Get.put(AuthController());
-
-  @override
-  void initState() {
-    _authController.checkAuth();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,15 +63,11 @@ class _SignInPageState extends State<SignInPage> {
 
   Widget _btnGoogle() {
     return GestureDetector(
-      onTap: () async {
-        try {
-          _authController.user.value = await _authController.signInWithGoogle();
+      onTap: () {
+        _authController.signInWithGoogle().then((user) {
+          _authController.user.value = user;
           Get.offAll(() => HomePage());
-        } catch (e) {
-          if (e is FirebaseAuthException) {
-            Helper.snackbar(title: "Error", content: e.message!);
-          }
-        }
+        });
       },
       child: Container(
         height: 56,

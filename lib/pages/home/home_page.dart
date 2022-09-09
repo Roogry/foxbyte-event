@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:foxbyte_event/controllers/auth_controller.dart';
+import 'package:foxbyte_event/controllers/event_controller.dart';
 import 'package:foxbyte_event/pages/auth/sign_in_page.dart';
 import 'package:foxbyte_event/pages/home/widgets/event_card.dart';
 import 'package:foxbyte_event/pages/scanner/qrcode_scan_page.dart';
@@ -9,12 +12,28 @@ import 'package:foxbyte_event/utils/helper.dart';
 import 'package:foxbyte_event/widgets/k_text.dart';
 import 'package:get/get.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final _authController = Get.put(AuthController());
+  final _eventController = Get.put(EventController());
+
+  @override
+  void initState() {
+    _eventController.getUserVisitedEvents();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    String displayName = _authController.user.value?.displayName ?? "Test User";
+    String displayEmail = _authController.user.value?.email ?? "test@gmail.com";
+
     return Scaffold(
       floatingActionButton: SizedBox(
         height: 70,
@@ -32,64 +51,141 @@ class HomePage extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 40),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: KText(
-                  text: "Halo, ${_authController.user.value?.displayName}",
+        child: RefreshIndicator(
+          onRefresh: () {
+            return _eventController.getUserVisitedEvents();
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.only(top: 40),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _headerProfile(
+                  name: displayName,
+                  email: displayEmail,
+                  photoUrl: _authController.user.value?.photoURL,
+                  context: context,
+                ),
+                const SizedBox(height: 24),
+                _cardBanner(
+                  onTap: () {
+                    Get.to(() => const QrcodeScanPage());
+                  },
+                ),
+                const SizedBox(height: 40),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: KText(
+                    text: "Riwayat Kunjunganmu",
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Obx(() {
+                    return _eventController.eventList.value.isNotEmpty ? Wrap(
+                      spacing: 12,
+                      runSpacing: 8,
+                      children: _eventController.eventList.value.map((event) {
+                        return EventCard(event: event);
+                      }).toList(),
+                    ) : _emptyEvent();
+                  }),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _emptyEvent(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 60),
+        Image.asset("assets/decorations/empty_illustration.png", height: 100,),
+        const SizedBox(height: 20),
+        KText(
+          text: "Riwayat Kosong",
+          fontWeight: FontWeight.w600,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        KText(
+          text: "Kunjungi Foxbyte dan scan barcode\nnuntuk meninggalkan jejak kunjunganmu",
+          fontSize: 12,
+          color: ColorConfig.greyText,
+          textAlign: TextAlign.center,
+          lineHeight: 1.5,
+        ),
+      ]
+    );
+  }
+
+  Widget _headerProfile({
+    required String name,
+    required String email,
+    String? photoUrl,
+    required BuildContext context,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        children: [
+          photoUrl != null
+              ? ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  child: Image.network(
+                    photoUrl,
+                    fit: BoxFit.cover,
+                    width: 50,
+                    height: 50,
+                  ),
+                )
+              : Container(),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                KText(
+                  text: "Halo, $name",
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                const SizedBox(height: 4),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    KText(
-                      text: _authController.user.value?.email?? "test@gmail.com",
-                      fontWeight: FontWeight.w600,
-                      color: ColorConfig.greyText,
+                    Expanded(
+                      child: KText(
+                        text: email,
+                        color: ColorConfig.greyText,
+                      ),
                     ),
+                    const SizedBox(width: 16),
                     _btnLogout(onTap: () {
-                      Get.offAll(() => SignInPage());
+                      Helper.of(context).alertCustomWithAction(
+                        "Apakah anda yakin akan keluar dari akun ini?",
+                        title: "Keluar",
+                        confirmTitle: "Yakin",
+                        function: () {
+                          _authController.signOut();
+                          Get.offAll(() => SignInPage());
+                        },
+                      );
                     }),
                   ],
                 ),
-              ),
-              const SizedBox(height: 24),
-              _cardBanner(
-                onTap: () {
-                  Get.to(() => const QrcodeScanPage());
-                },
-              ),
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: KText(
-                  text: "Riwayat Kunjunganmu",
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Wrap(spacing: 12, runSpacing: 8, children: [
-                  EventCard(),
-                  EventCard(),
-                  EventCard(),
-                  EventCard(),
-                ]),
-              )
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

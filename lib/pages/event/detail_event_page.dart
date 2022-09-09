@@ -1,27 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:foxbyte_event/models/event.dart';
 import 'package:foxbyte_event/services/color_config.dart';
 import 'package:foxbyte_event/utils/helper.dart';
 import 'package:foxbyte_event/widgets/k_primary_button.dart';
 import 'package:foxbyte_event/widgets/k_text.dart';
 import 'package:get/get.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailEventPage extends StatelessWidget {
-  const DetailEventPage({Key? key}) : super(key: key);
+  Event event;
+  DetailEventPage({Key? key, required this.event}) : super(key: key);
 
-  _openMaps() async {
-    String lat = "-8.620085"; 
-    String lng = "115.200761"; 
-    Uri googleMapsUrl = Uri.parse("comgooglemaps://?center=$lat,$lng");
-    Uri appleMapsUrl = Uri.parse("https://maps.apple.com/?q=$lat,$lng");
-
-    if (await canLaunchUrl(googleMapsUrl)) {
-      await launchUrl(googleMapsUrl);
-    } else if (await canLaunchUrl(appleMapsUrl)) {
-      await launchUrl(appleMapsUrl);
-    } else {
-      throw "Couldn't maps launch URL";
-    }
+  _openMaps({
+    required String lat,
+    required String lng,
+    String? eventName,
+  }) async {
+    MapsLauncher.launchCoordinates(
+        double.parse(lat), double.parse(lng), eventName);
   }
 
   @override
@@ -45,7 +42,7 @@ class DetailEventPage extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(8)),
                 child: Image.network(
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhGXhwIa1o8HpGbvO3aR-PBV9ME4o4wWd9Vw&usqp=CAU",
+                  event.imageUrl,
                   fit: BoxFit.fitWidth,
                 ),
               ),
@@ -54,7 +51,7 @@ class DetailEventPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: KText(
-                text: "TRANSFORMAKING: Roadshow Bali FAB Fest 2022",
+                text: event.name,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 isOverflow: false,
@@ -65,8 +62,7 @@ class DetailEventPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: KText(
-                text:
-                    "CAST Foundation bersama Meaningful Design Group menggelar TRANSFORMAKING : Roadshow Bali FAB Fest 2022 yang merupakan acara yang berfokus sebagai forum global dan arena eksperimen bagi para pembuat (makers), inovator, seniman, peneliti, aktivis, insinyur, pengusaha, dan para kreatif untuk terhubung, berkolaborasi bersama menciptakan jalur menuju masa depan bersama dengan menggunakan teknologi sebagai platform untuk mendukung visi masa depan regeneratif planet kita.\n\nAcara ini kami rangkai dalam bentuk sebuah workshop series yaitu TRANSFORMAKING: Roadshow Bali FAB FEST 2022 Workshop Series sebagai sebuah program untuk mengenalkan Bali Fab Fest dengan melibatkan peserta dalam pengenalan lokakarya fabrikasi digital menggunakan teknologi secara kreatif untuk memecahkan suatu masalah dimana pembicara pada workshop ini adalah Bapak Duwi Arsana yang dikenal sebagai seorang digital maker dan youtuber dalam bidang elektronik dengan hampir mencapai 1 juta subscribers.",
+                text: event.description,
                 color: ColorConfig.greyText,
                 isOverflow: false,
                 lineHeight: 1.6,
@@ -96,7 +92,11 @@ class DetailEventPage extends StatelessWidget {
               ),
               KPrimaryButton(
                 function: () async {
-                  _openMaps();
+                  _openMaps(
+                    eventName: event.name,
+                    lat: event.lat,
+                    lng: event.lng,
+                  );
                 },
                 title: "Buka Maps",
                 fontsize: 14,

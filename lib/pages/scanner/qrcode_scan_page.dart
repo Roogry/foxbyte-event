@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:foxbyte_event/controllers/event_controller.dart';
+import 'package:foxbyte_event/pages/home/home_page.dart';
 import 'package:foxbyte_event/services/color_config.dart';
+import 'package:foxbyte_event/utils/helper.dart';
 import 'package:foxbyte_event/widgets/k_text.dart';
 import 'package:get/get.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -14,6 +17,7 @@ class QrcodeScanPage extends StatefulWidget {
 }
 
 class _QrcodeScanPageState extends State<QrcodeScanPage> {
+  final _eventController = Get.put(EventController());
   final GlobalKey _qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? _result;
   QRViewController? _qrController;
@@ -29,8 +33,14 @@ class _QrcodeScanPageState extends State<QrcodeScanPage> {
   }
 
   @override
+  void initState() {
+    _eventController.eventItem.value = null;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Rx<bool> _isFlashOn = false.obs;
+    Rx<bool> isFlashOn = false.obs;
 
     return Scaffold(
       body: Stack(
@@ -52,55 +62,47 @@ class _QrcodeScanPageState extends State<QrcodeScanPage> {
             ),
           ),
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: (() => Get.back()),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
-                      onPrimary: Colors.grey,
-                      padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      minimumSize: const Size(32, 32),
-                    ),
-                    child: const Icon(
-                      Icons.chevron_left,
-                      color: ColorConfig.blackText,
-                      size: 16,
-                    ),
-                  ),
-                  Obx(() {
-                    return ElevatedButton(
-                      onPressed: () async {
-                        await _qrController?.toggleFlash();
-                        _isFlashOn.value = !_isFlashOn.value;
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
-                        onPrimary: Colors.grey,
-                        padding: EdgeInsets.zero,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+            child: Obx(() {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buttonAction(
+                          onTap: () => Get.back(),
+                          buttonSize: 32,
+                          child: const Icon(
+                            Icons.chevron_left,
+                            color: ColorConfig.blackText,
+                            size: 16,
+                          ),
                         ),
-                        minimumSize: const Size(32, 32),
-                      ),
-                      child: Icon(
-                        _isFlashOn.value
-                            ? Icons.flash_on_rounded
-                            : Icons.flash_off_rounded,
-                        color: ColorConfig.blackText,
-                        size: 16,
-                      ),
-                    );
-                  }),
-                ],
-              ),
-            ),
+                        _buttonAction(
+                          onTap: () async {
+                            await _qrController?.toggleFlash();
+                            isFlashOn.value = !isFlashOn.value;
+                          },
+                          buttonSize: 32,
+                          child: Icon(
+                            isFlashOn.value
+                                ? Icons.flash_on_rounded
+                                : Icons.flash_off_rounded,
+                            color: ColorConfig.blackText,
+                            size: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                    _eventController.isLoading.value
+                        ? _progressQrcode()
+                        : Container(),
+                  ],
+                ),
+              );
+            }),
           ),
           Positioned(
             bottom: 40,
@@ -117,17 +119,9 @@ class _QrcodeScanPageState extends State<QrcodeScanPage> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 40),
-                  ElevatedButton(
-                    onPressed: (() => Get.back()),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
-                      onPrimary: Colors.grey,
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(60, 60),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+                  _buttonAction(
+                    onTap: () => Get.back(),
+                    buttonSize: 60,
                     child: const Icon(
                       Icons.close,
                       color: ColorConfig.blackText,
@@ -143,12 +137,54 @@ class _QrcodeScanPageState extends State<QrcodeScanPage> {
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) {
+  Widget _buttonAction({
+    required Function() onTap,
+    required double buttonSize,
+    required Widget child,
+  }){
+    return ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        primary: Colors.white,
+        onPrimary: Colors.grey,
+        padding: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        minimumSize: Size(buttonSize, buttonSize),
+      ),
+      child: child,
+    );
+  }
+
+  Widget _progressQrcode() {
+    return Column(
+      children: [
+        const SizedBox(height: 40),
+        Helper.progressBar(color: ColorConfig.white),
+        const SizedBox(height: 20),
+        KText(
+          text: "Mengolah data qrcode..",
+          textAlign: TextAlign.center,
+          color: Colors.white.withOpacity(.8),
+        ),
+      ],
+    );
+  }
+
+  void _onQRViewCreated(QRViewController controller) async {
     _qrController = controller;
     controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        _result = scanData;
-      });
+      _result = scanData;
+
+      if (_result?.code != "" && !_eventController.isLoading.value) {
+        _eventController.getEventByQr(qrcode: _result!.code!).then((event) {
+          if (event != null) {
+            controller.pauseCamera();
+            Get.offAll(() => HomePage());
+          }
+        });
+      }
     });
   }
 

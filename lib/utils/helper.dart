@@ -65,15 +65,15 @@ class Helper {
           );
   }
 
-  alertCustomWithAction(content, {Function? function, String? confirmTitle}) {
+  alertCustomWithAction(content, {Function? function, String? title, String? confirmTitle}) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
             shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20))),
+                borderRadius: BorderRadius.all(Radius.circular(12))),
             title: KText(
-              text: "Alert",
+              text: title?? "Alert",
               textAlign: TextAlign.center,
               fontSize: 20,
               fontWeight: FontWeight.w700,
