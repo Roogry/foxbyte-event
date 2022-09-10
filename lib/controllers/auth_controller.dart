@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:foxbyte_event/pages/auth/sign_in_page.dart';
 import 'package:foxbyte_event/pages/home/home_page.dart';
@@ -12,8 +14,9 @@ class AuthController extends GetxController {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId:
-        "849850277536-fqpd1ut53uvqpdt5eg40hbcdbecelst4.apps.googleusercontent.com",
+    clientId: Platform.isIOS?
+        "849850277536-fqpd1ut53uvqpdt5eg40hbcdbecelst4.apps.googleusercontent.com" : null,
+        serverClientId: Platform.isAndroid? "849850277536-26com1j2l9q858e46qkv7k66f8935b08.apps.googleusercontent.com" : null,
     scopes: ["email"],
   );
 
