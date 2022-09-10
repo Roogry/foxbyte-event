@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:foxbyte_event/models/event.dart';
 import 'package:foxbyte_event/services/color_config.dart';
 import 'package:foxbyte_event/utils/helper.dart';
@@ -36,16 +39,26 @@ class DetailEventPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 16),
-            Container(
-              width: Get.width,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-                child: Image.network(
-                  event.imageUrl,
-                  fit: BoxFit.fitWidth,
+            Stack(
+              children: [
+                Container(
+                  width: Get.width,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    child: Image.network(
+                      event.imageUrl,
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
                 ),
-              ),
+                Positioned(
+                  bottom: 14,
+                  left: 32,
+                  right: 32,
+                  child: _bluryCardDateTime(event.eventDatetime.toDate()),
+                ),
+              ],
             ),
             const SizedBox(height: 24),
             Padding(
@@ -102,6 +115,66 @@ class DetailEventPage extends StatelessWidget {
                 fontsize: 14,
                 width: 120,
                 height: 30,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _bluryCardDateTime(DateTime eventDateTime) {
+    return ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: ColorConfig.white.withOpacity(.6),
+            borderRadius: Helper.getRadius(12),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      "assets/icons/ic_calendar.svg",
+                      width: 24,
+                      height: 24,
+                    ),
+                    const SizedBox(width: 6),
+                    KText(
+                      text: Helper.getFormatDate(
+                        eventDateTime.toString(),
+                        isNeedTime: false,
+                      ),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      "assets/icons/ic_clock.svg",
+                      width: 24,
+                      height: 24,
+                    ),
+                    const SizedBox(width: 6),
+                    KText(
+                      text: Helper.getFormatTime(
+                        eventDateTime.toString(),
+                      ),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

@@ -37,6 +37,7 @@ dependencies:
   flutter_svg: ^1.0.3
   get: ^4.6.5
   google_sign_in: ^5.4.1
+  intl: ^0.17.0
   maps_launcher: ^2.0.1
   qr_code_scanner: ^1.0.1
   url_launcher: ^6.1.5

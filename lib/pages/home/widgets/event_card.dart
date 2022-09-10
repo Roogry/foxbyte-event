@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:foxbyte_event/models/event.dart';
 import 'package:foxbyte_event/pages/event/detail_event_page.dart';
@@ -5,6 +6,7 @@ import 'package:foxbyte_event/services/color_config.dart';
 import 'package:foxbyte_event/utils/helper.dart';
 import 'package:foxbyte_event/widgets/k_text.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class EventCard extends StatelessWidget {
   Event event;
@@ -33,7 +35,6 @@ class EventCard extends StatelessWidget {
                   top: Radius.circular(8)),
               child: Image.network(
                 event.imageUrl,
-                // "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhGXhwIa1o8HpGbvO3aR-PBV9ME4o4wWd9Vw&usqp=CAU",
                 fit: BoxFit.cover,
               ),
             ),
@@ -43,15 +44,13 @@ class EventCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   KText(
-                    text: event.eventDatetime.toString(),
-                    // text: "15 Juli 2022, 10:00 am",
+                    text: Helper.getFormatDate(event.eventDatetime.toDate().toString()),
                     fontSize: 10,
                     color: ColorConfig.greyText,
                   ),
                   const SizedBox(height: 4),
                   KText(
                     text: event.name,
-                    // text: "TRANSFORMAKING: Roadshow Bali FAB Fest 2022",
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     maxLines: 2,

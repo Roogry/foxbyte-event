@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:foxbyte_event/services/color_config.dart';
 import 'package:foxbyte_event/widgets/k_circular_loading.dart';
 import 'package:foxbyte_event/widgets/k_text.dart';
+import 'package:intl/intl.dart';
 // import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
@@ -15,24 +16,30 @@ class Helper {
   DateTime? currentBackPressTime;
   Helper.of(this.context);
 
-  // static getFormatDate(String data, {bool? isNeedTime = true, bool? withDay = false}){
-  //   var value = DateTime.parse(data);
-  //   var date = value.day;
-  //   var month = DateFormat.MMM().format(value);
-  //   var year = value.year;
-  //   var hour = "${value.hour>9 ? value.hour : "0" + value.hour.toString() }:${value.minute > 9 ? value.minute : "0" + value.minute.toString()}";
-  //   var result = "";
-  //   if(isNeedTime == true) {
-  //     result = "$date $month $year, $hour";
-  //   }else{
-  //     result = "$date $month $year";
-  //   }
-  //   if(withDay == true){
-  //     var _dayConvert = DateFormat('EEEE').format(value);
-  //     result = "$_dayConvert $result";
-  //   }
-  //   return result;
-  // }
+  static getFormatDate(String data, {bool? isNeedTime = true, bool? withDay = false}){
+    var value = DateTime.parse(data);
+    var date = value.day;
+    var month = DateFormat.MMM().format(value);
+    var year = value.year;
+    var hour = "${value.hour>9 ? value.hour : "0" + value.hour.toString() }:${value.minute > 9 ? value.minute : "0" + value.minute.toString()}";
+    var result = "";
+    if(isNeedTime == true) {
+      result = "$date $month $year, $hour";
+    }else{
+      result = "$date $month $year";
+    }
+    if(withDay == true){
+      var _dayConvert = DateFormat('EEEE').format(value);
+      result = "$_dayConvert $result";
+    }
+    return result;
+  }
+
+  static getFormatTime(String data){
+    var value = DateTime.parse(data);
+    var hour = "${value.hour>9 ? value.hour : "0" + value.hour.toString() }:${value.minute > 9 ? value.minute : "0" + value.minute.toString()}";
+    return hour;
+  }
 
   static List<BoxShadow> getShadow(
       {Color? color,

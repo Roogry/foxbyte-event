@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:foxbyte_event/firebase_options.dart';
 import 'package:foxbyte_event/pages/auth/sign_in_page.dart';
 import 'package:foxbyte_event/pages/splash_screen.dart';
@@ -30,7 +31,9 @@ class MyApp extends StatelessWidget {
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
         appBarTheme: const AppBarTheme(
-          brightness: Brightness.dark,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarBrightness: Brightness.dark,
+          ),
         ),
       ),
       debugShowCheckedModeBanner: false,
