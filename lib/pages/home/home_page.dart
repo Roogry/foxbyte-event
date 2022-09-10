@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.only(top: 40),
+            padding: const EdgeInsets.only(top: 40, bottom: 32),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
