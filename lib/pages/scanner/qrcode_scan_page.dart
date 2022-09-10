@@ -174,14 +174,16 @@ class _QrcodeScanPageState extends State<QrcodeScanPage> {
 
   void _onQRViewCreated(QRViewController controller) async {
     _qrController = controller;
+    _qrController!.resumeCamera();
+
     controller.scannedDataStream.listen((scanData) {
       _result = scanData;
 
       if (_result?.code != "" && !_eventController.isLoading.value) {
-        _eventController.getEventByQr(qrcode: _result!.code!).then((event) {
+        _eventController.getEventByQr(qrcode: _result!.code!).then((event) async {
           if (event != null) {
-            controller.pauseCamera();
-            Get.offAll(() => HomePage());
+            await controller.pauseCamera();
+            Get.offAll(() => const HomePage());
           }
         });
       }
