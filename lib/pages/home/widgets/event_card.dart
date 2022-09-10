@@ -4,6 +4,7 @@ import 'package:foxbyte_event/models/event.dart';
 import 'package:foxbyte_event/pages/event/detail_event_page.dart';
 import 'package:foxbyte_event/services/color_config.dart';
 import 'package:foxbyte_event/utils/helper.dart';
+import 'package:foxbyte_event/widgets/k_cached_image.dart';
 import 'package:foxbyte_event/widgets/k_text.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -30,14 +31,19 @@ class EventCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(8)),
-              child: Image.network(
-                event.imageUrl,
-                fit: BoxFit.cover,
-              ),
+            KCachedImage(
+              photoUrl: event.imageUrl, 
+              placeholderPath: "assets/decorations/event_placeholder.png", 
+              borderRadius: 8,
             ),
+            // ClipRRect(
+            //   borderRadius: const BorderRadius.vertical(
+            //       top: Radius.circular(8)),
+            //   child: Image.network(
+            //     event.imageUrl,
+            //     fit: BoxFit.cover,
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 12, 8, 16),
               child: Column(

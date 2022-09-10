@@ -9,6 +9,7 @@ import 'package:foxbyte_event/pages/home/widgets/event_card.dart';
 import 'package:foxbyte_event/pages/scanner/qrcode_scan_page.dart';
 import 'package:foxbyte_event/services/color_config.dart';
 import 'package:foxbyte_event/utils/helper.dart';
+import 'package:foxbyte_event/widgets/k_cached_image.dart';
 import 'package:foxbyte_event/widgets/k_text.dart';
 import 'package:get/get.dart';
 
@@ -86,13 +87,16 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Obx(() {
-                    return _eventController.eventList.value.isNotEmpty ? Wrap(
-                      spacing: 12,
-                      runSpacing: 8,
-                      children: _eventController.eventList.value.map((event) {
-                        return EventCard(event: event);
-                      }).toList(),
-                    ) : _emptyEvent();
+                    return _eventController.eventList.value.isNotEmpty
+                        ? Wrap(
+                            spacing: 12,
+                            runSpacing: 8,
+                            children:
+                                _eventController.eventList.value.map((event) {
+                              return EventCard(event: event);
+                            }).toList(),
+                          )
+                        : _emptyEvent();
                   }),
                 )
               ],
@@ -103,28 +107,29 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _emptyEvent(){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const SizedBox(height: 60),
-        Image.asset("assets/decorations/empty_illustration.png", height: 100,),
-        const SizedBox(height: 20),
-        KText(
-          text: "Riwayat Kosong",
-          fontWeight: FontWeight.w600,
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        KText(
-          text: "Kunjungi Foxbyte dan scan barcode\nnuntuk meninggalkan jejak kunjunganmu",
-          fontSize: 12,
-          color: ColorConfig.greyText,
-          textAlign: TextAlign.center,
-          lineHeight: 1.5,
-        ),
-      ]
-    );
+  Widget _emptyEvent() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      const SizedBox(height: 60),
+      Image.asset(
+        "assets/decorations/empty_illustration.png",
+        height: 100,
+      ),
+      const SizedBox(height: 20),
+      KText(
+        text: "Riwayat Kosong",
+        fontWeight: FontWeight.w600,
+        textAlign: TextAlign.center,
+      ),
+      const SizedBox(height: 8),
+      KText(
+        text:
+            "Kunjungi Foxbyte dan scan barcode\nnuntuk meninggalkan jejak kunjunganmu",
+        fontSize: 12,
+        color: ColorConfig.greyText,
+        textAlign: TextAlign.center,
+        lineHeight: 1.5,
+      ),
+    ]);
   }
 
   Widget _headerProfile({
@@ -138,14 +143,12 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         children: [
           photoUrl != null
-              ? ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(8)),
-                  child: Image.network(
-                    photoUrl,
-                    fit: BoxFit.cover,
-                    width: 50,
-                    height: 50,
-                  ),
+              ? KCachedImage(
+                  photoUrl: photoUrl,
+                  placeholderPath: "assets/decorations/profile_placeholder.png",
+                  borderRadius: 8,
+                  width: 50,
+                  height: 50,
                 )
               : Container(),
           const SizedBox(width: 12),
@@ -159,32 +162,25 @@ class _HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.w700,
                 ),
                 const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: KText(
-                        text: email,
-                        color: ColorConfig.greyText,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    _btnLogout(onTap: () {
-                      Helper.of(context).alertCustomWithAction(
-                        "Apakah anda yakin akan keluar dari akun ini?",
-                        title: "Keluar",
-                        confirmTitle: "Yakin",
-                        function: () {
-                          _authController.signOut();
-                          Get.offAll(() => SignInPage());
-                        },
-                      );
-                    }),
-                  ],
-                ),
+                KText(
+                  text: email,
+                  color: ColorConfig.greyText,
+                )
               ],
             ),
           ),
+          const SizedBox(width: 16),
+          _btnLogout(onTap: () {
+            Helper.of(context).alertCustomWithAction(
+              "Apakah anda yakin akan keluar dari akun ini?",
+              title: "Keluar",
+              confirmTitle: "Yakin",
+              function: () {
+                _authController.signOut();
+                Get.offAll(() => SignInPage());
+              },
+            );
+          }),
         ],
       ),
     );

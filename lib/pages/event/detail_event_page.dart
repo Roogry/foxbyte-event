@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:foxbyte_event/models/event.dart';
 import 'package:foxbyte_event/services/color_config.dart';
 import 'package:foxbyte_event/utils/helper.dart';
+import 'package:foxbyte_event/widgets/k_cached_image.dart';
 import 'package:foxbyte_event/widgets/k_primary_button.dart';
 import 'package:foxbyte_event/widgets/k_text.dart';
 import 'package:get/get.dart';
@@ -39,26 +40,34 @@ class DetailEventPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 16),
-            Stack(
-              children: [
-                Container(
-                  width: Get.width,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    child: Image.network(
-                      event.imageUrl,
-                      fit: BoxFit.fitWidth,
-                    ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Stack(
+                children: [
+                  KCachedImage(
+                    photoUrl: event.imageUrl, 
+                    placeholderPath: "assets/decorations/event_placeholder.png", 
+                    borderRadius: 8,
                   ),
-                ),
-                Positioned(
-                  bottom: 14,
-                  left: 32,
-                  right: 32,
-                  child: _bluryCardDateTime(event.eventDatetime.toDate()),
-                ),
-              ],
+                  // Container(
+                  //   width: Get.width,
+                  //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                  //   child: ClipRRect(
+                  //     borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  //     child: Image.network(
+                  //       event.imageUrl,
+                  //       fit: BoxFit.fitWidth,
+                  //     ),
+                  //   ),
+                  // ),
+                  Positioned(
+                    bottom: 14,
+                    left: 16,
+                    right: 16,
+                    child: _bluryCardDateTime(event.eventDatetime.toDate()),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 24),
             Padding(
