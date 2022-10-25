@@ -49,17 +49,6 @@ class DetailEventPage extends StatelessWidget {
                     placeholderPath: "assets/decorations/event_placeholder.png", 
                     borderRadius: 8,
                   ),
-                  // Container(
-                  //   width: Get.width,
-                  //   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  //   child: ClipRRect(
-                  //     borderRadius: const BorderRadius.all(Radius.circular(8)),
-                  //     child: Image.network(
-                  //       event.imageUrl,
-                  //       fit: BoxFit.fitWidth,
-                  //     ),
-                  //   ),
-                  // ),
                   Positioned(
                     bottom: 14,
                     left: 16,

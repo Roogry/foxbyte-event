@@ -9,7 +9,6 @@ class EventController extends GetxController {
 
   var isLoading = false.obs;
 
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
